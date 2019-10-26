@@ -12,6 +12,7 @@ function updateSensorReadings(messageData)
    
     $("#sensorReadingsList").empty();
 
+    $(document).prop('title', 'Room Sensor: ' + readings.hostname + ' | Dashboard');
     $("#ReadingsTitle").html('Sensor readings - ' + readings.hostname);
 
     currentValue = readings.temp.toFixed(1) + "&#8451";
