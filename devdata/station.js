@@ -14,28 +14,13 @@ function updateSensorReadings(messageData)
 
     $("#ReadingsTitle").html('Sensor readings - ' + readings.hostname);
 
-    if(readings.metric)
-    {
-        currentValue = readings.temp.toFixed(1) + "&#8451";
-    }
-    else
-    {
-        var farenheit = (readings.temp * 1.8) + 32;
-        currentValue = farenheit.toFixed(1) + "&#8457";
-    }
+    currentValue = readings.temp.toFixed(1) + "&#8451";
     $("#sensorReadingsList").append('<li class="list-group-item mdi mdi-thermometer">' + 'Temperature: ' + currentValue + '</li>');
     
     currentValue = readings.humidity.toFixed(1) + "%";
     $("#sensorReadingsList").append('<li class="list-group-item mdi mdi-water-percent">' + 'Humidity: ' + currentValue + '</li>');
 
-    if(readings.metric)
-    {
-        currentValue = readings.pressure.toFixed(1) + " hPA";
-    }
-    else
-    {
-        currentValue = readings.pressure.toFixed(1) + " mb";
-    }
+    currentValue = readings.pressure.toFixed(1) + " hPA";
     $("#sensorReadingsList").append('<li class="list-group-item mdi mdi-gauge">' + 'Pressure: ' + currentValue + '</li>');
 }
 
