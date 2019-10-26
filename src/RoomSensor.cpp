@@ -38,9 +38,6 @@ Task mqttPublish(5*MINUTES_MULT, TASK_FOREVER, &mqttPublishCallback);
 
 void readSensorsCallback()
 {
-// testing
-webServer.updateSensorReadings(sensorTemp, sensorHumidity, sensorPressure);
-    
     if(bmeReader.isActive())
     {
         sensorTemp = bmeReader.readTemp();
