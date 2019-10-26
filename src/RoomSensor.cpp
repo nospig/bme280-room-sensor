@@ -181,6 +181,8 @@ void setup()
     //display = new DisplaySerial();
     display = new DisplayBase();
 
+    WiFi.hostname("Sensor-Living-Room");
+
     taskScheduler.startNow(); 
     taskScheduler.addTask(connectWifi);
     connectWifi.enable();
