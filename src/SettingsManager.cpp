@@ -44,8 +44,9 @@ void SettingsManager::resetSettings()
     data.mqttTempTopic = "";
     data.mqttHumidityTopic = "";
     data.mqttPressureTopic = "";
-    data.mqttDisplayTopic = "";
     data.mqttPort = 1883;
+
+    data.hostname = "Sensor";
 
     saveSettings();
     settingsChanged = true;
@@ -76,9 +77,9 @@ void SettingsManager::loadSettings()
     data.mqttTempTopic = (const char*)doc["MqttTempTopic"];
     data.mqttHumidityTopic = (const char*)doc["MqttHumidityTopic"];
     data.mqttPressureTopic = (const char*)doc["MqttPressureTopic"];
-    data.mqttDisplayTopic = (const char*)doc["MqttDisplayTopic"];    
-    data.mqttPort = doc["MqttPort"];
-    
+    data.mqttPort = doc["MqttPort"];    
+    data.hostname = (const char*)doc["Hostname"];
+
     // testing
     Serial.println();
     serializeJson(doc, Serial);
@@ -104,8 +105,8 @@ void SettingsManager::saveSettings()
     doc["MqttTempTopic"] = data.mqttTempTopic;
     doc["MqttHumidityTopic"] = data.mqttHumidityTopic;
     doc["MqttPressureTopic"] = data.mqttPressureTopic;
-    doc["MqttDisplayTopic"] = data.mqttDisplayTopic;
     doc["MqttPort"] = data.mqttPort;
+    doc["Hostname"] = data.hostname;
 
     jsonSettings = SPIFFS.open(SETTINGS_FILE_NAME, "w");
     if(jsonSettings)
@@ -349,18 +350,17 @@ void SettingsManager::setMqttPressureTopic(String pressureTopic)
     }
 }
 
-String SettingsManager::getMqttDisplayTopic()
+String SettingsManager::getHostname()
 {
-    return data.mqttDisplayTopic;
+    return data.hostname;
 }
 
-void SettingsManager::setMqttDisplayTopic(String displayTopic)
+void SettingsManager::setHostname(String hostname)
 {
-    if(data.mqttDisplayTopic != displayTopic)
+    if(data.hostname != hostname)
     {
-        data.mqttDisplayTopic = displayTopic;
+        data.hostname = hostname;
         updateSettings();
-        mqttReconnectRequired = true;
     }
 }
 

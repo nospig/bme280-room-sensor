@@ -38,6 +38,9 @@ Task mqttPublish(5*MINUTES_MULT, TASK_FOREVER, &mqttPublishCallback);
 
 void readSensorsCallback()
 {
+// testing
+webServer.updateSensorReadings(sensorTemp, sensorHumidity, sensorPressure);
+    
     if(bmeReader.isActive())
     {
         sensorTemp = bmeReader.readTemp();
@@ -79,8 +82,6 @@ void connectWifiCallback()
 {
     AsyncWiFiManager wifiManager(webServer.getServer(), &dns);
 
-    settingsManager.init();
-
     display->drawStartupDisplay();
 
     wifiManager.autoConnect("Room Station");
@@ -93,7 +94,6 @@ void connectWifiCallback()
     thingSpeakReporter.init(&settingsManager);
     bmeReader.init(BME_SDA, BME_SCL, BME_ADDRESS);
     mqttManager.init(&settingsManager);
-    mqttManager.setSubscribeCallback(mqttSubscribeCallback);
 
     delay(WIFI_CONNECTING_DELAY);
     display->startMainDisplay();
@@ -151,24 +151,6 @@ void checkSettingsChangedCallback()
     }
 }
 
-// mqtt
-
-void mqttSubscribeCallback(const char* topic, const char *payload)
-{
-    if(!strcmp(topic, settingsManager.getMqttDisplayTopic().c_str()))
-    {
-        if(!strcmp(payload, "on"))
-        {
-            //Serial.println("Display on");
-            display->setDisplayEnabled(true);
-        }
-        if(!strcmp(payload, "off"))
-        {
-            //Serial.println("Display off");
-            display->setDisplayEnabled(false);
-        }
-    }
-}
 
 // basic setup and loop
 
@@ -181,7 +163,9 @@ void setup()
     //display = new DisplaySerial();
     display = new DisplayBase();
 
-    WiFi.hostname("Room Sensor");
+    settingsManager.init();
+
+    WiFi.hostname(settingsManager.getHostname());
 
     taskScheduler.startNow(); 
     taskScheduler.addTask(connectWifi);

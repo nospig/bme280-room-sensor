@@ -11,8 +11,6 @@ void updateWifiStrengthCallback();
 void checkSettingsChangedCallback();
 void mqttPublishCallback();
 
-void mqttSubscribeCallback(const char* topic, const char *payload);
-
 void setupOtaUpdates();
 
 #endif // _weatherstation_h

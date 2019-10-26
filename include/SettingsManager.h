@@ -24,8 +24,9 @@ typedef struct SettingsData
     String mqttTempTopic;
     String mqttHumidityTopic;
     String mqttPressureTopic;
-    String mqttDisplayTopic;
     int mqttPort;
+
+    String hostname;
 
     bool thingSpeakEnabled;
     bool mqttEnabled;
@@ -83,11 +84,11 @@ class SettingsManager
         String getMqttPressureTopic();
         void setMqttPressureTopic(String pressureTopic);
 
-        String getMqttDisplayTopic();
-        void setMqttDisplayTopic(String displayTopic);
-
         bool getMqttReconnectRequired();
         void resetMqttReconnectRequired();
+
+        String getHostname();
+        void setHostname(String hostname);
 
         bool getSettingsChanged();
         void resetSettingsChanged();

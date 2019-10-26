@@ -82,11 +82,6 @@ void MQTTManager::connectToMqtt()
 void MQTTManager::onConnect(bool sessionPresent)
 {
     connected = true;
-
-    if(settingsManager->getMqttDisplayTopic() != "")
-    {
-        mqttClient.subscribe(settingsManager->getMqttDisplayTopic().c_str(), 0);
-    }
 }
 
 void MQTTManager::onDisconnect(AsyncMqttClientDisconnectReason reason)

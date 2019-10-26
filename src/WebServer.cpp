@@ -15,7 +15,7 @@ SettingsManager* WebServer::settingsManager;
 
 static const char NAV_BAR[] PROGMEM = 
     "<nav class='navbar navbar-expand-sm bg-dark navbar-dark fixed-top'>"
-    "<a class='navbar-brand' href='index.html'>Room sensor</a>"
+    "<a class='navbar-brand' href='index.html'>Room Sensor</a>"
     "<ul class='navbar-nav'>"
     "<li class='nav-item'>"
     "<a class='nav-link' href='settings.html'>Settings</a>"
@@ -44,16 +44,19 @@ void WebServer::init(SettingsManager* settingsManager)
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         request->send_P(200, "text/html", index_html, tokenProcessor);
+        //request->send(SPIFFS, "/index.html", String(), false, tokenProcessor);
     });
 
     server.on("/index.html", HTTP_GET, [](AsyncWebServerRequest *request)
     {        
         request->send_P(200, "text/html", index_html, tokenProcessor);
+        //request->send(SPIFFS, "/index.html", String(), false, tokenProcessor);
     });
 
     server.on("/settings.html", HTTP_GET, [](AsyncWebServerRequest *request)
     {        
         request->send_P(200, "text/html", settings_html, tokenProcessor);
+        //request->send(SPIFFS, "/settings.html", String(), false, tokenProcessor);
     });
 
     server.on("/thingSpeakSettings.html", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -64,6 +67,7 @@ void WebServer::init(SettingsManager* settingsManager)
     server.on("/mqttSettings.html", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         request->send_P(200, "text/html", mqttSettings_html, tokenProcessor);        
+        //request->send(SPIFFS, "/mqttSettings.html", String(), false, tokenProcessor);
     });
 
     server.on("/updateThingSpeak.html", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -84,6 +88,12 @@ void WebServer::init(SettingsManager* settingsManager)
         request->redirect("/index.html");
     });
 
+    server.on("/updateHostname.html", HTTP_GET, [](AsyncWebServerRequest *request)
+    {
+        handleUpdateHostname(request);
+        request->redirect("/index.html");
+    });
+
     server.on("/resetSettings.html", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         handleResetSettings(request);
@@ -99,6 +109,7 @@ void WebServer::init(SettingsManager* settingsManager)
     server.on("/js/station.js", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         request->send_P(200, "application/javascript", station_js);
+        //request->send(SPIFFS, "/js/station.js", String(), false, tokenProcessor);
     });
 
     server.on("/js/settings.js", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -146,6 +157,7 @@ void WebServer::updateSensorReadings(float temp, float humidity, float pressure)
     readings["temp"] = temp;
     readings["humidity"] = humidity;
     readings["pressure"] = pressure;
+    readings["hostname"] = settingsManager->getHostname();
 
     serializeJson(jsonDoc, output);
     currentSensorJson = output;
@@ -244,14 +256,14 @@ String WebServer::tokenProcessor(const String& token)
     {
         return settingsManager->getMqttPressureTopic();
     }  
-    if(token == "MQTTDISPLAYTOPIC")
-    {
-        return settingsManager->getMqttDisplayTopic();
-    }   
     if(token == "MQTTPORT")
     {
         return String(settingsManager->getMqttPort());
     }
+    if(token == "HOSTNAME")
+    {
+        return settingsManager->getHostname();
+    }  
 
     return String();
 }
@@ -333,11 +345,6 @@ void WebServer::handleMQTTSettings(AsyncWebServerRequest* request)
         AsyncWebParameter* p = request->getParam("mqttPressureTopic");
         settingsManager->setMqttPressureTopic(p->value());
     }
-    if(request->hasParam("mqttDisplayTopic"))
-    {
-        AsyncWebParameter* p = request->getParam("mqttDisplayTopic");
-        settingsManager->setMqttDisplayTopic(p->value());
-    }
 }
 
 
@@ -357,6 +364,15 @@ void WebServer::handleUpdateTimings(AsyncWebServerRequest* request)
     {
         AsyncWebParameter* p = request->getParam("mqttPublishInterval");
         settingsManager->setMqttPublishInterval(p->value().toInt() * SECONDS_MULT);
+    }
+}
+
+void WebServer::handleUpdateHostname(AsyncWebServerRequest* request)
+{
+    if(request->hasParam("hostName"))
+    {
+        AsyncWebParameter* p = request->getParam("hostName");
+        settingsManager->setHostname(p->value());
     }
 }
 
